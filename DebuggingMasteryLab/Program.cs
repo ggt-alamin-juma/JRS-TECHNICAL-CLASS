@@ -33,6 +33,7 @@ namespace DebuggingMasteryLab
         {
             User[] users = { };
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
+            // BUG: Using users.GetType() instead of typeof(User[])
             DataContractJsonSerializer ser = new DataContractJsonSerializer(users.GetType());
             users = ser.ReadObject(ms) as User[];
             ms.Close();
@@ -41,7 +42,7 @@ namespace DebuggingMasteryLab
 
         public static string GetJsonData()
         {
-            string str = "[{ \"points\":4o,\"firstname\":\"Fred\",\"lastname\":\"Smith\"},{\"lastName\":\"Jackson\"}]";
+            string str = "[{ \"points\":40,\"firstname\":\"Fred\",\"lastname\":\"Smith\"},{\"lastName\":\"Jackson\"}]";
             return str;
         }
 
@@ -94,7 +95,7 @@ namespace DebuggingMasteryLab
         [DataMember]
         internal string lastname;
         [DataMember]
-        internal string points; // BUG: Should be int
+        internal int points; // Fixed from Lab 1
         [DataMember]
         internal int totalpoints;
     }
