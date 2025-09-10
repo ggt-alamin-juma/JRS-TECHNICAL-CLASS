@@ -32,16 +32,24 @@ namespace DebuggingMasteryLab
         public static User[] ReadToObject(string json)
         {
             User[] users = { };
-            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(users.GetType());
-            users = ser.ReadObject(ms) as User[];
-            ms.Close();
+            try
+            {
+                MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(User[]));
+                users = ser.ReadObject(ms) as User[];
+                ms.Close();
+            }
+            catch (SerializationException ex)
+            {
+                Console.WriteLine($"❌ JSON parsing failed: {ex.Message}");
+                return new User[] { };
+            }
             return users;
         }
 
         public static string GetJsonData()
         {
-            string str = "[{ \"points\":4o,\"firstname\":\"Fred\",\"lastname\":\"Smith\"},{\"lastName\":\"Jackson\"}]";
+            string str = "[{\"points\":40,\"firstname\":\"Fred\",\"lastname\":\"Smith\"},{\"points\":25,\"firstname\":\"John\",\"lastname\":\"Jackson\"}]";
             return str;
         }
 
@@ -94,7 +102,7 @@ namespace DebuggingMasteryLab
         [DataMember]
         internal string lastname;
         [DataMember]
-        internal string points; // BUG: Should be int
+        internal int points; // Fixed from Lab 1
         [DataMember]
         internal int totalpoints;
     }
